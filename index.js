@@ -1,9 +1,20 @@
 import express from "express";
 import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import * as admin from "firebase-admin";
+
 import * as db from "./queries";
 
+dotenv.config();
+var serviceAccount = require("./curling-authentication-firebase-adminsdk-xjskw-bba563e1ff.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://curling-authentication.firebaseio.com"
+});
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(
@@ -18,6 +29,6 @@ app.get("/", (request, response) => {
 
 app.get("/users", db.getUsers);
 
-app.listen(port, () => {
+app.listen(port || 3000, () => {
   console.log(`App running on port ${port}.`);
 });
