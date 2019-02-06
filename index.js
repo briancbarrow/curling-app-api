@@ -29,6 +29,8 @@ app.get("/", (request, response) => {
 
 app.get("/users", db.getUsers);
 
+app.post("/newGame", db.newGame);
+
 app.listen(port || 3000, () => {
   console.log(`App running on port ${port}.`);
 });
