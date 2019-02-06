@@ -1,5 +1,5 @@
 import express from "express";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
@@ -48,6 +48,17 @@ app.use((err, req, res, next) => {
   } else {
     console.error(err);
     res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Custom Error Handler
+app.use((err, req, res) => {
+  if (err.status) {
+    const errBody = Object.assign({}, err, { message: err.message });
+    res.status(err.status).json(errBody);
+  } else {
+    res.status(500).json({ message: 'Internal Server Error' });
+    if (err.name !== 'FakeError') console.log(err);
   }
 });
 
