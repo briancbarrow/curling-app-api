@@ -135,7 +135,8 @@ const submitGame = (req, res) => {
       player1Score,
       player2Score,
       inProgress,
-      winner_Id
+      winner_Id,
+      datePlayed: new Date()
     })
     .then(rows => {
       submitPlayerStats(winner_Id, winningScore, true);
