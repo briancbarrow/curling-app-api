@@ -30,6 +30,11 @@ app.get("/", (request, response) => {
 app.get("/users", db.getUsers);
 
 app.post("/newGame", db.newGame);
+app.post("/updateGame", db.updateGame);
+app.post("/submitGame", db.submitGame);
+// app.post("/submitPlayerStats", db.submitPlayerStats);
+
+app.post("/newUser", db.newUser);
 
 app.listen(port || 3000, () => {
   console.log(`App running on port ${port}.`);
