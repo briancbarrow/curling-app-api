@@ -81,6 +81,7 @@ const submitPlayerStats = (id, score, wasWinner) => {
       [statTableName]: 1
     })
     .then(rows => {
+      ///update if new records were made for each player
       if (score < rows[0].low_score || rows[0].low_score === null) {
         knex("users")
           .where({ id: id })
@@ -151,7 +152,6 @@ const submitGame = (req, res) => {
     });
 };
 
-////update if new records were made for each player
 ////update if new records were made for group
 ////update reigning group champion if needed
 
