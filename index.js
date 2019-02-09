@@ -1,12 +1,14 @@
-import express from "express";
 // import bodyParser from "body-parser";
-import dotenv from "dotenv";
-import morgan from "morgan";
+import express from "express";
 import cors from "cors";
+import morgan from "morgan";
+import passport from "passport";
+
+
 
 import * as db from "./queries";
+import { PORT, CLIENT_ORIGIN } from "./config";
 
-dotenv.config();
 // var serviceAccount = require("./curling-authentication-firebase-adminsdk-xjskw-bba563e1ff.json");
 
 // admin.initializeApp({
@@ -15,7 +17,6 @@ dotenv.config();
 // });
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 // Log all requests
 app.use(morgan('dev'));
@@ -31,7 +32,6 @@ app.get("/", (request, response) => {
 });
 
 app.get("/users", db.getUsers);
-
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
@@ -51,20 +51,9 @@ app.use((err, req, res, next) => {
   }
 });
 
-// Custom Error Handler
-app.use((err, req, res) => {
-  if (err.status) {
-    const errBody = Object.assign({}, err, { message: err.message });
-    res.status(err.status).json(errBody);
-  } else {
-    res.status(500).json({ message: 'Internal Server Error' });
-    if (err.name !== 'FakeError') console.log(err);
-  }
-});
-
 // Listen for incoming connections
-app.listen(port, () => {
-  console.info(`App running on port ${port}.`);
+app.listen(PORT, () => {
+  console.info(`App running on port ${PORT}.`);
 }).on('error', err => {
   console.error(err);
 });
