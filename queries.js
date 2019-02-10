@@ -14,26 +14,79 @@ const getUsers = (req, res) => {
     });
 };
 
-//TODO:
+// const doesUserExist = userId => {
+//   knex("users")
+//     .returning("id")
+//     .where({ id: userId })
+//     .then(rows => {
+//       if (rows[0]) {
+//         return true;
+//       } else {
+//         return false;
+//       }
+//     });
+// };
+
 //create new game
 const newGame = (req, res) => {
-  knex("gameData")
-    .returning("id")
-    .insert({
-      player1_id: req.query.player1Id,
-      player2_id: req.query.player2Id,
-      groupId: req.query.groupId || null,
-      player1Score: 0,
-      player2Score: 0,
-      winner_Id: null,
-      inProgress: true,
-      gameTypeIsNormal: req.query.gameTypeIsNormal || true
-    })
-    .asCallback((error, results) => {
-      if (error) {
+  ///////NEED to check if players exist first
+  let usersExist = false;
+  let userPromise = new Promise((resolve, reject) => {
+    knex("users")
+      .where({ id: req.query.player1Id })
+      .then(rows => {
+        if (rows[0]) {
+          usersExist = true;
+        } else {
+          usersExist = false;
+        }
+        knex("users")
+          .where({ id: req.query.player2Id })
+          .then(rows => {
+            if (rows[0]) {
+              usersExist = true;
+            } else {
+              usersExist = false;
+            }
+
+            if (usersExist) {
+              resolve(usersExist);
+            } else {
+              console.log("Before reject");
+              reject(new Error("User does not exist"));
+            }
+          })
+          .catch(error => {
+            throw error;
+          });
+      })
+      .catch(error => {
         throw error;
-      }
-      res.status(200).json(results);
+      });
+  })
+    .then(doUsersExist => {
+      console.log("DO I EVEN GET HERE");
+      knex("gameData")
+        .returning("id")
+        .insert({
+          player1_id: req.query.player1Id,
+          player2_id: req.query.player2Id,
+          groupId: req.query.groupId || null,
+          player1Score: 0,
+          player2Score: 0,
+          winner_Id: null,
+          inProgress: true,
+          gameTypeIsNormal: req.query.gameTypeIsNormal || true
+        })
+        .asCallback((error, results) => {
+          if (error) {
+            throw error;
+          }
+          res.status(200).json(results);
+        });
+    })
+    .catch(error => {
+      res.status(500).json({ error: "User Does Not Exist" });
     });
 };
 //create user
@@ -140,9 +193,15 @@ const submitGame = (req, res) => {
       datePlayed: new Date()
     })
     .then(rows => {
-      submitPlayerStats(winner_Id, winningScore, true);
-      submitPlayerStats(loser_Id, loserScore, false);
+      new Promise(function(resolve, reject) {
+        submitPlayerStats(winner_Id, winningScore, true);
+      }).then(
+        new Promise((resolve, reject) => {
+          submitPlayerStats(loser_Id, loserScore, false);
+        })
+      );
 
+      // new Promise
       res.status(200).json(rows);
     })
     .catch(error => {
@@ -152,7 +211,60 @@ const submitGame = (req, res) => {
     });
 };
 
+// Create New Group
+const newGroup = (req, res) => {
+  const { name, creatorId } = req.query;
+  knex("groups")
+    .returning("id")
+    .insert({
+      name,
+      members: [creatorId],
+      adminMembers: [creatorId]
+    })
+    .asCallback((error, results) => {
+      if (error) {
+        throw error;
+      }
+      res.status(200).json(results);
+    });
+};
+
 ////update if new records were made for group
+const submitGroupStats = (id, score, wasWinner) => {
+  const statTableName = wasWinner ? "games_won" : "games_lost";
+  knex("users")
+    .returning(["id", "name", "high_score", "low_score"])
+    .where({ id: id })
+    .increment({
+      [statTableName]: 1
+    })
+    .then(rows => {
+      ///update if new records were made for each player
+      if (score < rows[0].low_score || rows[0].low_score === null) {
+        knex("users")
+          .where({ id: id })
+          .update({ low_score: score })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+      if (score > rows[0].high_score || rows[0].high_score === null) {
+        knex("users")
+          .where({ id: id })
+          .update({ high_score: score })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+      return;
+    })
+    .catch(error => {
+      if (error) {
+        throw error;
+      }
+    });
+};
+
 ////update reigning group champion if needed
 
 module.exports = {
@@ -160,5 +272,6 @@ module.exports = {
   newGame,
   newUser,
   updateGame,
-  submitGame
+  submitGame,
+  newGroup
 };

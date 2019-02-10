@@ -35,6 +35,7 @@ app.post("/submitGame", db.submitGame);
 // app.post("/submitPlayerStats", db.submitPlayerStats);
 
 app.post("/newUser", db.newUser);
+app.post("/newGroup", db.newGroup);
 
 app.listen(port || 3000, () => {
   console.log(`App running on port ${port}.`);
