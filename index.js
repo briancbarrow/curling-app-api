@@ -4,10 +4,15 @@ import cors from "cors";
 import morgan from "morgan";
 import passport from "passport";
 
-
+const localStrategy = require('./passport/localStrategy');
+const jwtStrategy = require('./passport/jwt');
 
 import * as db from "./queries";
 import { PORT, CLIENT_ORIGIN } from "./config";
+
+const authRouter = require('./routes/authRoute');
+const usersCreateRouter = require('./routes/userCreateRoute');
+// const usersUpdateRouter = require('./routes/userUpdateRoute');
 
 // var serviceAccount = require("./curling-authentication-firebase-adminsdk-xjskw-bba563e1ff.json");
 
@@ -16,26 +21,42 @@ import { PORT, CLIENT_ORIGIN } from "./config";
 //   databaseURL: "https://curling-authentication.firebaseio.com"
 // });
 
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
 const app = express();
 
 // Log all requests
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
 // Enable CORS support
-app.use(cors());
+app.use(
+  cors({
+    origin: CLIENT_ORIGIN,
+  }),
+);
 
 // Parse request body
 app.use(express.json());
 
+// Protect endpoints using JWT Strategy
+const jwtAuth = passport.authenticate("jwt", {
+  session: false,
+  failWithError: true
+});
+
 app.get("/", (request, response) => {
   response.json({ info: " Curling Node.js, Express, and Postgress API" });
 });
+app.use("/api", authRouter);
+app.use("/api/users/create", usersCreateRouter);
+// app.use("/api/users/update", jwtAuth, usersUpdateRouter);
 
 app.get("/users", db.getUsers);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
+  const err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
@@ -47,13 +68,15 @@ app.use((err, req, res, next) => {
     res.status(err.status).json(errBody);
   } else {
     console.error(err);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
 // Listen for incoming connections
-app.listen(PORT, () => {
-  console.info(`App running on port ${PORT}.`);
-}).on('error', err => {
-  console.error(err);
-});
+app
+  .listen(PORT, () => {
+    console.info(`App running on port ${PORT}.`);
+  })
+  .on("error", err => {
+    console.error(err);
+  });
