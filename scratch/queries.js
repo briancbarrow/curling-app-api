@@ -3,25 +3,10 @@ const queryMethods = require("../queries");
 const newUserMethod = queryMethods.newUser;
 
 const newUser = {
-  'alex',
-  'alex@test.com',
-  password: hashedPW
+  name: 'alex',
+  email: 'alex@test.com',
+  password: '$2a$10$zXchivLdvLDS.GkTQxRQ9.tW0lUo/CPU0VyUMdePB6vgE3rq5WZ6a'
 };
-
-newUserMethod()
-
-// knex
-// .select("name")
-// .from("users")
-// .orderBy("id")
-// .asCallback((error, results) => {
-//   if (error) {
-//     throw error;
-//   }
-//   console.log(results);
-// });
-
-
 
 knex("users")
   .where({ name: "Jerry" })
@@ -39,19 +24,14 @@ knex("users")
     }
   });
 
-// //create user
-// const newUser = (req, res) => {
-//     const { name, email } = req.query;
-//     knex("users")
-//       .returning("id")
-//       .insert({
-//         name,
-//         email
-//       })
-//       .asCallback((error, results) => {
-//         if (error) {
-//           throw error;
-//         }
-//         res.status(200).json(results);
-//       });
-//   };
+
+knex("users")
+.returning("id")
+.insert(newUser)
+.asCallback((error, results) => {
+  if (error) {
+    throw error;
+  }
+  console.log(results);
+  // res.status(200).json(results);
+});
