@@ -46,12 +46,12 @@ const newUser = (newUser) => {
       email,
       password
     })
-    // .asCallback((error, results) => {
-    //   if (error) {
-    //     throw error;
-    //   }
-    //   res.status(200).json(results);
-    // });
+    .asCallback((error, results) => {
+      if (error) {
+        throw error;
+      }
+      res.status(200).json(results);
+    });
 };
 
 //update game score

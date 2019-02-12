@@ -74,28 +74,45 @@ router.post('/', (req, res, next) => {
 
   const { name, email, password } = req.body;
 
-  const hashedPassword = new Promise((resolve, reject) => {
-    resolve(bcrypt.hash(password, 10));
-  });
+  knex
+    .select('email')
+    .from('users')
+    .where('email', email)
+    .then(rows => {
+      if (rows.length === 0) {
+        const hashedPassword = new Promise((resolve, reject) => {
+          resolve(bcrypt.hash(password, 10));
+        });
 
-  hashedPassword.then(hashedPW => {
-    const newItem = { name, email, password: hashedPW };
+        hashedPassword.then(hashedPW => {
+          const newItem = { name, email, password: hashedPW };
 
-    knex
-      .insert(newItem)
-      .into('users')
-      .returning('id')
-      .then(results => {
-        const result = results[0];
+          knex
+            .insert(newItem)
+            .into('users')
+            .returning('id')
+            .then(results => {
+              const result = results[0];
+              res
+                .status(201)
+                .location(`${req.originalUrl}/${result.id}`)
+                .json(result);
+            })
+            .catch(err => {
+              next(err);
+            });
+        });
+      } else {
+        const newlyCreatedError = new Error('user already exists!');
         res
-          .status(201)
-          .location(`${req.originalUrl}/${result.id}`)
-          .json(result);
-      })
-      .catch(err => {
-        next(err);
-      });
-  });
+          .status(401)
+          .location(`${req.originalUrl}`)
+          .json(newlyCreatedError.message);
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
 });
 
 module.exports = router;
