@@ -1,8 +1,7 @@
 // import { strategy as LocalStrategy } from "passport-local";
-const { Strategy: LocalStrategy } = require("passport-local");
-import knex from "../queriesConfig";
-
-
+const { Strategy: LocalStrategy } = require('passport-local');
+const bcrypt = require('bcryptjs');
+import knex from '../queriesConfig';
 
 // Note: Use `function` (not an `arrow function`) to allow setting `this`
 // validatePassword = function validateThatPassword(pwd) {
@@ -10,33 +9,37 @@ import knex from "../queriesConfig";
 //   return bcrypt.compare(pwd, currentUser.password);
 // };
 
-
 // ===== Define and create basicStrategy =====
 const localStrategy = new LocalStrategy((username, password, done) => {
+  console.log(`username: ${username}`);
   let user;
   // Get Users
-  knex("users")
+  knex('users')
     .where({ name: username })
     .first()
     .then(results => {
       user = results;
       console.log(user);
       if (!user) {
-        console.log("NO USER!");
+        console.log('NO USER!');
         return Promise.reject({
-          reason: "LoginError",
-          message: "Incorrect username",
-          location: "username"
+          reason: 'LoginError',
+          message: 'Incorrect username',
+          location: 'username'
         });
       }
+      console.log(`password: ${password}`);
+      console.log(`user.password: ${user.password}`);
+
       return bcrypt.compare(password, user.password);
     })
     .then(isValid => {
+      console.log(isValid);
       if (!isValid) {
         return Promise.reject({
-          reason: "LoginError",
-          message: "Incorrect password",
-          location: "password"
+          reason: 'LoginError',
+          message: 'Incorrect password',
+          location: 'password'
         });
       }
       // CHANGE THIS LINE
@@ -45,7 +48,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
     .catch(err => {
       // console.log('Line 32: LocalStrategy');
       // console.log(err);
-      if (err.reason === "LoginError") {
+      if (err.reason === 'LoginError') {
         return done(null, false);
       }
       return done(err);

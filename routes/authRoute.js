@@ -8,30 +8,31 @@ const router = express.Router();
 
 const localAuth = passport.authenticate('local', {
   session: false,
-  failWithError: true,
+  failWithError: true
 });
 
+function createAuthToken(user) {
+  return jwt.sign({ user }, JWT_SECRET, {
+    subject: user.username,
+    expiresIn: JWT_EXPIRY
+  });
+}
+
 router.post('/login', localAuth, (req, res) => {
-    const authToken = createAuthToken(req.user);
-    res.json({ authToken });
-  });
+  console.log(`req.body: ${req.body}`);
   
-  const jwtAuth = passport.authenticate('jwt', {
-    session: false,
-    failWithError: true,
-  });
-  
-  router.post('/auth/refresh', jwtAuth, (req, res) => {
-    const authToken = createAuthToken(req.user);
-    res.json({ authToken });
-  });
-  
-  function createAuthToken(user) {
-    return jwt.sign({ user }, JWT_SECRET, {
-      subject: user.username,
-      expiresIn: JWT_EXPIRY,
-    });
-  }
-  
-  module.exports = router;
-  
+  const authToken = createAuthToken(req.user);
+  res.json({ authToken });
+});
+
+const jwtAuth = passport.authenticate('jwt', {
+  session: false,
+  failWithError: true
+});
+
+router.post('/auth/refresh', jwtAuth, (req, res) => {
+  const authToken = createAuthToken(req.user);
+  res.json({ authToken });
+});
+
+module.exports = router;
