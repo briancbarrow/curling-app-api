@@ -13,14 +13,12 @@ const localAuth = passport.authenticate('local', {
 
 function createAuthToken(user) {
   return jwt.sign({ user }, JWT_SECRET, {
-    subject: user.username,
+    subject: user.email,
     expiresIn: JWT_EXPIRY
   });
 }
 
 router.post('/login', localAuth, (req, res) => {
-  console.log(`req.body: ${req.body}`);
-  
   const authToken = createAuthToken(req.user);
   res.json({ authToken });
 });

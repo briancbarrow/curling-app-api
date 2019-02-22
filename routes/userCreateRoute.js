@@ -85,10 +85,7 @@ router.post('/', (req, res, next) => {
         });
 
         hashedPassword.then(hashedPW => {
-          console.log('hashedPW?', hashedPW);
-          console.log('hashedPW.length', hashedPW.length);
           const newItem = { name, email, password: hashedPW };
-
           knex
             .insert(newItem)
             .into('users')

@@ -11,7 +11,6 @@ import knex from '../queriesConfig';
 
 // ===== Define and create basicStrategy =====
 const localStrategy = new LocalStrategy((username, password, done) => {
-  console.log('username:', username);
   let user;
   // Get Users
   knex('users')
@@ -19,23 +18,16 @@ const localStrategy = new LocalStrategy((username, password, done) => {
     .first()
     .then(results => {
       user = results;
-      console.log('user: ', user);
       if (!user) {
-        console.log('NO USER!');
         return Promise.reject({
           reason: 'LoginError',
           message: 'Incorrect username',
           location: 'username'
         });
       }
-      console.log('password: ', password);
-      console.log('user.password: ', user.password);
-      console.log('user.password.length', user.password.length);
-
       return bcrypt.compare(password, user.password);
     })
     .then(isValid => {
-      console.log('isValid?', isValid);
       if (!isValid) {
         return Promise.reject({
           reason: 'LoginError',
@@ -43,8 +35,11 @@ const localStrategy = new LocalStrategy((username, password, done) => {
           location: 'password'
         });
       }
-      // CHANGE THIS LINE
-      return done(null, user.toObject());
+      let tempUser = {
+        name: user.name,
+        email: user.email
+      };
+      return done(null, tempUser);
     })
     .catch(err => {
       // console.log('Line 32: LocalStrategy');

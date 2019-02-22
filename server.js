@@ -48,7 +48,7 @@ const jwtAuth = passport.authenticate("jwt", {
 app.get("/", (request, response) => {
   response.json({ info: " Curling Node.js, Express, and Postgress API" });
 });
-app.use("/api", authRouter);
+app.use("/api/users", authRouter);
 app.use("/api/users/create", usersCreateRouter);
 // app.use("/api/users/update", jwtAuth, usersUpdateRouter);
 
