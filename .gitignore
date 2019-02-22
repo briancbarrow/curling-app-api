@@ -3,3 +3,6 @@ queriesConfig.js
 .env
 curling-authentication-firebase-adminsdk-xjskw-bba563e1ff.json
 firebaseConfig.js
+knexfile.js
+knex.js
+tempFiles
