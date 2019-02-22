@@ -6,3 +6,4 @@ firebaseConfig.js
 knexfile.js
 knex.js
 tempFiles
+package-lock.json
