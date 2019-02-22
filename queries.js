@@ -96,7 +96,8 @@ const newUser = (req, res) => {
     .returning("id")
     .insert({
       name,
-      email
+      email,
+      password
     })
     .asCallback((error, results) => {
       if (error) {
