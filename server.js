@@ -17,6 +17,8 @@ const gameCreateRouter = require("./routes/gameCreateRoute");
 const gameUpdateRouter = require("./routes/gameUpdateRoute");
 const gameSubmitRouter = require("./routes/gameSubmitRoute");
 
+const groupCreateRouter = require("./routes/groupCreateRoute");
+
 // var serviceAccount = require("./curling-authentication-firebase-adminsdk-xjskw-bba563e1ff.json");
 
 // admin.initializeApp({
@@ -57,13 +59,12 @@ app.use("/api/users/create", usersCreateRouter);
 
 // app.get("/users", db.getUsers);
 
-app.use("/newGame", gameCreateRouter);
-app.use("/updateGame", gameUpdateRouter);
-app.use("/submitGame", gameSubmitRouter);
+app.use("/api/game/create", gameCreateRouter);
+app.use("/api/game/update", gameUpdateRouter);
+app.use("/api/game/submit", gameSubmitRouter);
 // app.post("/submitPlayerStats", db.submitPlayerStats);
 
-// app.post("/newUser", db.newUser);
-// app.post("/newGroup", db.newGroup);
+app.use("/api/group/create", groupCreateRouter);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
