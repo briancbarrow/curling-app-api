@@ -28,84 +28,84 @@ const getUsers = (req, res) => {
 // };
 
 //create new game
-const newGame = (req, res) => {
-  ///////NEED to check if players exist first
-  let usersExist = false;
-  let userPromise = new Promise((resolve, reject) => {
-    knex("users")
-      .where({ id: req.query.player1Id })
-      .then(rows => {
-        if (rows[0]) {
-          usersExist = true;
-        } else {
-          usersExist = false;
-        }
-        knex("users")
-          .where({ id: req.query.player2Id })
-          .then(rows => {
-            if (rows[0]) {
-              usersExist = true;
-            } else {
-              usersExist = false;
-            }
+// const newGame = (req, res) => {
+//   ///////NEED to check if players exist first
+//   let usersExist = false;
+//   let userPromise = new Promise((resolve, reject) => {
+//     knex("users")
+//       .where({ id: req.query.player1Id })
+//       .then(rows => {
+//         if (rows[0]) {
+//           usersExist = true;
+//         } else {
+//           usersExist = false;
+//         }
+//         knex("users")
+//           .where({ id: req.query.player2Id })
+//           .then(rows => {
+//             if (rows[0]) {
+//               usersExist = true;
+//             } else {
+//               usersExist = false;
+//             }
 
-            if (usersExist) {
-              resolve(usersExist);
-            } else {
-              console.log("Before reject");
-              reject(new Error("User does not exist"));
-            }
-          })
-          .catch(error => {
-            throw error;
-          });
-      })
-      .catch(error => {
-        throw error;
-      });
-  })
-    .then(doUsersExist => {
-      console.log("DO I EVEN GET HERE");
-      knex("gameData")
-        .returning("id")
-        .insert({
-          player1_id: req.query.player1Id,
-          player2_id: req.query.player2Id,
-          groupId: req.query.groupId || null,
-          player1Score: 0,
-          player2Score: 0,
-          winner_Id: null,
-          inProgress: true,
-          gameTypeIsNormal: req.query.gameTypeIsNormal || true
-        })
-        .asCallback((error, results) => {
-          if (error) {
-            throw error;
-          }
-          res.status(200).json(results);
-        });
-    })
-    .catch(error => {
-      res.status(500).json({ error: "User Does Not Exist" });
-    });
-};
-//create user
-const newUser = (req, res) => {
-  const { name, email } = req.query;
-  knex("users")
-    .returning("id")
-    .insert({
-      name,
-      email,
-      password
-    })
-    .asCallback((error, results) => {
-      if (error) {
-        throw error;
-      }
-      res.status(200).json(results);
-    });
-};
+//             if (usersExist) {
+//               resolve(usersExist);
+//             } else {
+//               console.log("Before reject");
+//               reject(new Error("User does not exist"));
+//             }
+//           })
+//           .catch(error => {
+//             throw error;
+//           });
+//       })
+//       .catch(error => {
+//         throw error;
+//       });
+//   })
+//     .then(doUsersExist => {
+//       console.log("DO I EVEN GET HERE");
+//       knex("gameData")
+//         .returning("id")
+//         .insert({
+//           player1_id: req.query.player1Id,
+//           player2_id: req.query.player2Id,
+//           groupId: req.query.groupId || null,
+//           player1Score: 0,
+//           player2Score: 0,
+//           winner_Id: null,
+//           inProgress: true,
+//           gameTypeIsNormal: req.query.gameTypeIsNormal || true
+//         })
+//         .asCallback((error, results) => {
+//           if (error) {
+//             throw error;
+//           }
+//           res.status(200).json(results);
+//         });
+//     })
+//     .catch(error => {
+//       res.status(500).json({ error: "User Does Not Exist" });
+//     });
+// };
+// //create user
+// const newUser = (req, res) => {
+//   const { name, email } = req.query;
+//   knex("users")
+//     .returning("id")
+//     .insert({
+//       name,
+//       email,
+//       password
+//     })
+//     .asCallback((error, results) => {
+//       if (error) {
+//         throw error;
+//       }
+//       res.status(200).json(results);
+//     });
+// };
 
 //update game score
 const updateGame = (req, res) => {
@@ -270,8 +270,8 @@ const submitGroupStats = (id, score, wasWinner) => {
 
 module.exports = {
   getUsers,
-  newGame,
-  newUser,
+  // newGame,
+  // newUser,
   updateGame,
   submitGame,
   newGroup

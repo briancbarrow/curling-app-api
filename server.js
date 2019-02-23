@@ -14,6 +14,7 @@ const authRouter = require("./routes/authRoute");
 const usersCreateRouter = require("./routes/userCreateRoute");
 // const usersUpdateRouter = require('./routes/userUpdateRoute');
 const gameCreateRouter = require("./routes/gameCreateRoute");
+const gameUpdateRouter = require("./routes/gameUpdateRoute");
 
 // var serviceAccount = require("./curling-authentication-firebase-adminsdk-xjskw-bba563e1ff.json");
 
@@ -56,7 +57,7 @@ app.use("/api/users/create", usersCreateRouter);
 // app.get("/users", db.getUsers);
 
 app.use("/newGame", gameCreateRouter);
-// app.post("/updateGame", db.updateGame);
+app.use("/updateGame", gameUpdateRouter);
 // app.post("/submitGame", db.submitGame);
 // app.post("/submitPlayerStats", db.submitPlayerStats);
 
