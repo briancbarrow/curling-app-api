@@ -55,24 +55,6 @@ const submitPlayerStats = (id, score, wasWinner) => {
     });
 };
 
-// Create New Group
-const newGroup = (req, res) => {
-  const { name, creatorId } = req.query;
-  knex("groups")
-    .returning("id")
-    .insert({
-      name,
-      members: [creatorId],
-      adminMembers: [creatorId]
-    })
-    .asCallback((error, results) => {
-      if (error) {
-        throw error;
-      }
-      res.status(200).json(results);
-    });
-};
-
 ////update if new records were made for group
 const submitGroupStats = (id, score, wasWinner) => {
   const statTableName = wasWinner ? "games_won" : "games_lost";
@@ -116,6 +98,5 @@ module.exports = {
   // newGame,
   // newUser,
   // updateGame,
-  submitPlayerStats,
-  newGroup
+  submitPlayerStats
 };
