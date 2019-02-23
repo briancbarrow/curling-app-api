@@ -1,4 +1,4 @@
-const knex = require("./queriesConfig");
+const knex = require("../queriesConfig");
 
 // Get Users
 const getUsers = (req, res) => {
@@ -108,22 +108,22 @@ const getUsers = (req, res) => {
 // };
 
 //update game score
-const updateGame = (req, res) => {
-  const { gameId, player1Score, player2Score } = req.query;
-  knex("gameData")
-    .returning(["player1Score", "player2Score"])
-    .where({ id: gameId })
-    .update({
-      player1Score,
-      player2Score
-    })
-    .asCallback((error, results) => {
-      if (error) {
-        throw error;
-      }
-      res.status(200).json(results);
-    });
-};
+// const updateGame = (req, res) => {
+//   const { gameId, player1Score, player2Score } = req.query;
+//   knex("gameData")
+//     .returning(["player1Score", "player2Score"])
+//     .where({ id: gameId })
+//     .update({
+//       player1Score,
+//       player2Score
+//     })
+//     .asCallback((error, results) => {
+//       if (error) {
+//         throw error;
+//       }
+//       res.status(200).json(results);
+//     });
+// };
 
 //submit new stats for each user and update if new records made
 const submitPlayerStats = (id, score, wasWinner) => {
@@ -140,6 +140,9 @@ const submitPlayerStats = (id, score, wasWinner) => {
         knex("users")
           .where({ id: id })
           .update({ low_score: score })
+          .then(result => {
+            return true;
+          })
           .catch(error => {
             console.log(error);
           });
@@ -148,11 +151,13 @@ const submitPlayerStats = (id, score, wasWinner) => {
         knex("users")
           .where({ id: id })
           .update({ high_score: score })
+          .then(result => {
+            return true;
+          })
           .catch(error => {
             console.log(error);
           });
       }
-      return;
     })
     .catch(error => {
       if (error) {
@@ -163,6 +168,7 @@ const submitPlayerStats = (id, score, wasWinner) => {
 
 //submit game score and stats
 const submitGame = (req, res) => {
+  console.log("or here");
   const {
     gameId,
     player1_id,
@@ -257,7 +263,7 @@ const submitGroupStats = (id, score, wasWinner) => {
             console.log(error);
           });
       }
-      return;
+      return true;
     })
     .catch(error => {
       if (error) {
@@ -272,7 +278,7 @@ module.exports = {
   getUsers,
   // newGame,
   // newUser,
-  updateGame,
-  submitGame,
+  // updateGame,
+  submitPlayerStats,
   newGroup
 };

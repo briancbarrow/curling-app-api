@@ -7,7 +7,7 @@ import passport from "passport";
 const localStrategy = require("./passport/localStrategy");
 const jwtStrategy = require("./passport/jwt");
 
-import * as db from "./queries";
+import * as db from "./routes/routeHelpers";
 import { PORT, CLIENT_ORIGIN } from "./config";
 
 const authRouter = require("./routes/authRoute");
@@ -15,6 +15,7 @@ const usersCreateRouter = require("./routes/userCreateRoute");
 // const usersUpdateRouter = require('./routes/userUpdateRoute');
 const gameCreateRouter = require("./routes/gameCreateRoute");
 const gameUpdateRouter = require("./routes/gameUpdateRoute");
+const gameSubmitRouter = require("./routes/gameSubmitRoute");
 
 // var serviceAccount = require("./curling-authentication-firebase-adminsdk-xjskw-bba563e1ff.json");
 
@@ -58,7 +59,7 @@ app.use("/api/users/create", usersCreateRouter);
 
 app.use("/newGame", gameCreateRouter);
 app.use("/updateGame", gameUpdateRouter);
-// app.post("/submitGame", db.submitGame);
+app.use("/submitGame", gameSubmitRouter);
 // app.post("/submitPlayerStats", db.submitPlayerStats);
 
 // app.post("/newUser", db.newUser);
