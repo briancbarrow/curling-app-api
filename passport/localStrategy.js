@@ -1,7 +1,7 @@
 // import { strategy as LocalStrategy } from "passport-local";
-const { Strategy: LocalStrategy } = require('passport-local');
-const bcrypt = require('bcryptjs');
-import knex from '../queriesConfig';
+const { Strategy: LocalStrategy } = require("passport-local");
+const bcrypt = require("bcryptjs");
+import knex from "../queriesConfig";
 
 // Note: Use `function` (not an `arrow function`) to allow setting `this`
 // validatePassword = function validateThatPassword(pwd) {
@@ -12,17 +12,17 @@ import knex from '../queriesConfig';
 // ===== Define and create basicStrategy =====
 const localStrategy = new LocalStrategy((username, password, done) => {
   let user;
-  // Get Users
-  knex('users')
+  // Basic Login
+  knex("users")
     .where({ name: username })
     .first()
     .then(results => {
       user = results;
       if (!user) {
         return Promise.reject({
-          reason: 'LoginError',
-          message: 'Incorrect username',
-          location: 'username'
+          reason: "LoginError",
+          message: "Incorrect username",
+          location: "username"
         });
       }
       return bcrypt.compare(password, user.password);
@@ -30,9 +30,9 @@ const localStrategy = new LocalStrategy((username, password, done) => {
     .then(isValid => {
       if (!isValid) {
         return Promise.reject({
-          reason: 'LoginError',
-          message: 'Incorrect password',
-          location: 'password'
+          reason: "LoginError",
+          message: "Incorrect password",
+          location: "password"
         });
       }
       let tempUser = {
@@ -44,7 +44,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
     .catch(err => {
       // console.log('Line 32: LocalStrategy');
       // console.log(err);
-      if (err.reason === 'LoginError') {
+      if (err.reason === "LoginError") {
         return done(null, false);
       }
       return done(err);
