@@ -36,6 +36,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
         });
       }
       let tempUser = {
+        id: user.id,
         name: user.name,
         email: user.email
       };
