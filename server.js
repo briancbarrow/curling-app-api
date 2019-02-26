@@ -12,7 +12,7 @@ import { PORT, CLIENT_ORIGIN } from "./config";
 
 const authRouter = require("./routes/authRoute");
 const usersCreateRouter = require("./routes/userCreateRoute");
-// const usersUpdateRouter = require('./routes/userUpdateRoute');
+const usersUpdateRouter = require('./routes/userUpdateRoute');
 const gameCreateRouter = require("./routes/gameCreateRoute");
 const gameUpdateRouter = require("./routes/gameUpdateRoute");
 const gameSubmitRouter = require("./routes/gameSubmitRoute");
@@ -55,7 +55,7 @@ app.get("/", (request, response) => {
 });
 app.use("/api/users", authRouter);
 app.use("/api/users/create", usersCreateRouter);
-// app.use("/api/users/update", jwtAuth, usersUpdateRouter);
+app.use("/api/users/update", jwtAuth, usersUpdateRouter);
 
 // app.get("/users", db.getUsers);
 
