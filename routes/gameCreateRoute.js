@@ -5,7 +5,6 @@ const router = express.Router();
 
 /* ========== POST/CREATE A GAME ========== */
 router.post("/", (req, res, next) => {
-  console.log("HELLO");
   const requiredFields = ["player1Id", "player2Id"];
   const missingField = requiredFields.find(field => !(field in req.body));
 
@@ -30,7 +29,7 @@ router.post("/", (req, res, next) => {
   let usersExist = false;
 
   let player1Exists = knex("users")
-    .where({ id: req.query.player1Id })
+    .where({ id: req.body.player1Id })
     .then(rows => {
       if (rows[0]) {
         usersExist = true;
@@ -43,7 +42,7 @@ router.post("/", (req, res, next) => {
     });
 
   let player2Exists = knex("users")
-    .where({ id: req.query.player2Id })
+    .where({ id: req.body.player2Id })
     .then(rows => {
       if (rows[0]) {
         usersExist = true;
@@ -62,8 +61,8 @@ router.post("/", (req, res, next) => {
     knex("gameData")
       .returning("id")
       .insert({
-        player1_id: req.query.player1Id,
-        player2_id: req.query.player2Id,
+        player1_id: req.body.player1Id,
+        player2_id: req.body.player2Id,
         groupId: req.query.groupId || null,
         player1Score: 0,
         player2Score: 0,

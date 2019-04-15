@@ -37,7 +37,15 @@ const localStrategy = new LocalStrategy((username, password, done) => {
       }
       let tempUser = {
         name: user.name,
-        email: user.email
+        email: user.email,
+        groups: user.groups,
+        high_score: user.groups,
+        highest_end_score: user.highest_end_score,
+        lowest_end_score: user.lowest_end_score,
+        low_score: user.low_score,
+        games_won: user.games_won,
+        games_lost: user.games_lost,
+        userId: user.id
       };
       return done(null, tempUser);
     })
