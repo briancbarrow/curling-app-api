@@ -11,6 +11,7 @@ import * as db from "./routes/routeHelpers";
 import { PORT, CLIENT_ORIGIN } from "./config";
 
 const authRouter = require("./routes/authRoute");
+const userRouter = require("./routes/userRoute");
 const usersCreateRouter = require("./routes/userCreateRoute");
 // const usersUpdateRouter = require('./routes/userUpdateRoute');
 const gameCreateRouter = require("./routes/gameCreateRoute");
@@ -55,6 +56,7 @@ app.get("/", (request, response) => {
 });
 app.use("/api/users", authRouter);
 app.use("/api/users/create", usersCreateRouter);
+app.use("/api/user", userRouter);
 // app.use("/api/users/update", jwtAuth, usersUpdateRouter);
 
 // app.get("/users", db.getUsers);
